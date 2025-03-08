@@ -209,3 +209,197 @@ console.log(`Return pode ser explícito quando há somente uma operação: ${arr
 
 arrow6()
 
+/* Iteração sobre vetor ================================================*/
+
+// @brief Pode-se iterar sobre um vetor, em um ciclo de repetição,
+//        utilizando-se da palavra reservada 'of'
+
+const nomes = ["Leo", "Andre", "Alexandre", "Durval", "Estevan"]
+let nomes_a = []
+
+for (const nome of nomes) {
+    if (nome.charAt(0) === 'A') {
+        nomes_a.push(nome)
+    }
+}
+
+console.log(nomes_a)
+
+/* Utilizando 'filter' e predicados ====================================*/
+
+// @brief Pode-se filtrar valores em uma estrutura utilizando filtros,
+//        onde a condição é definida a partir de uma arrow function.
+
+nomes_a = nomes.filter(nome => nome.startsWith('A') || nome.startsWith('a'))
+
+console.log(nomes_a)
+
+/* Utilizando 'map' e predicados =======================================*/
+
+let letras_iniciais = []
+
+for (const nome of nomes) {
+    letras_iniciais.push(nome.charAt(0))
+}
+
+console.log(letras_iniciais)
+
+// @brief Pode-se aplicar funções sobre um arranjo utilizando 'map'
+
+letras_iniciais = nomes.map(nome => nome.charAt(0))
+
+console.log(letras_iniciais)
+
+/* Produzindo valore booleanos =========================================*/
+
+// @brief Pode-se gerar valores booleanos a partir da verificação 
+//        de arranjos, através de predicados
+
+// @note  Verificando se todos iniciam com uma letra
+
+console.log(nomes.every(n => n.startsWith('a') || n.startsWith('A')))
+
+// @note  Verificando se ao menos um inicia com a letra
+
+console.log(nomes.some(n => n.startsWith('A') || n.startsWith('a')))
+
+/* Reduzindo coleções ==================================================*/
+
+// @brief A redução consiste em iterar entre os valores e acumulando 
+//        um resultado. Realizando-se uma soma dos elementos da 
+//        coleção, tem-se um valor reduzido: a 'soma' a partir de todos
+//        os elementos - portanto, reduzindo-se a coleção
+
+const valores = [1, 2, 3, 4]
+
+let soma_result = valores.reduce((ac, n) => ac + n)
+
+console.log(soma_result)
+
+// @note  Pode-se definir um valor inicial:
+
+let identity = valores.reduce((ac, n) => ac * n, 0)
+console.log(identity)
+
+let mult_result = valores.reduce((ac, n) => ac * n, 1)
+console.log(mult_result)
+
+/* Trabalhando com funções =============================================*/
+
+// @brief 
+
+// @note  Armazenando uma função em uma variável
+
+let oneFunc = function() {
+    console.log('Fui armazenada em uma variável!')
+}
+
+oneFunc()
+
+// @note  Executando uma função passada como argumento
+
+function h(funcao) { funcao() }
+
+h(oneFunc)
+
+// @note  Gerando uma função a partir de outra (retornando)
+
+function j() {
+    return function() {
+        console.log('Fui criada por g')
+    }
+}
+
+h(j())
+
+// @note  Toda função, implicitamente retorna 'undefined'
+
+console.log(j()())
+
+// @note  Desafio (AULA):
+
+function f(funcao) { return funcao() }
+
+function g() {
+    return () => { return () => 1 }
+}
+
+console.log(f(g()()))
+
+/* Closures ============================================================*/
+
+// @brief Uma função interna em conjunto com as variáveis de seu escopo 
+//        externo é chamado de 'Closure'
+
+function k() {
+
+    let nome = 'João'
+    return function() {
+        console.log(nome)
+    }
+
+}
+
+k()()
+
+// @brief Pode-se utilizar closure da seguinte forma:
+
+const saudacoesFactory = (saudacao, nome) => {
+
+    return function() {
+        console.log(`${saudacao}, ${nome}`)
+    }
+
+}
+
+let saudacao_ola = saudacoesFactory("Olá", "João")
+saudacao_ola()
+
+let saudacao_adeus = saudacoesFactory("Adeus", "João")
+saudacao_adeus()
+
+// @note  Ou seja, uma closure é combinação de uma função
+//        e todas suas referências.
+
+// @brief Devolvendo múltiplas closures:
+
+function eAgora() {
+
+    let cont = 1
+
+    let f1 = () => console.log(cont)
+
+    cont++
+
+    let f2 = () => console.log(cont)
+
+    return {f1, f2}
+
+}
+
+const eAgoraResult = eAgora()
+
+eAgoraResult.f1()
+eAgoraResult.f2()
+
+// @note  Isso destaca o fato de que a referência
+//        é atrelada ao closure e não somente o valor.
+//        Isto é, se o valor contido pela referência é alterado,
+//        então, é alterado para todas as funções.
+
+function shared() {
+
+    let cont = 0
+
+    let increase = () => cont++
+    let display  = () => console.log(cont)
+
+    return {increase, display}
+
+}
+
+const sharedResult = shared()
+
+sharedResult.display()
+sharedResult.increase()
+sharedResult.display()
