@@ -403,3 +403,179 @@ const sharedResult = shared()
 sharedResult.display()
 sharedResult.increase()
 sharedResult.display()
+
+
+/* Objects =============================================================*/
+
+// @brief Criando uma instância de objeto JavaScript  
+
+const pessoa = {
+    nome: "João",
+    idade: 17
+}
+
+console.log(pessoa.nome)
+console.log(pessoa['idade'])
+
+// @brief Criando uma composição de objetos
+
+const pessoa2 = {
+    nome: "Maria",
+    idade: 21,
+    endereço: {
+        logradouro: "Rua B",
+        numero: 121,
+        bairro: {
+            nome: "J"
+        },
+        cidade: {
+            nome: "Itu",
+            populacao: 70000
+        }
+    }
+}
+
+console.log(pessoa2.endereço.bairro.nome)
+
+// @note  Pode-se utilizar dois tipos de referência a
+//        atributos JavaScript
+
+console.log(pessoa2.endereço.cidade.populacao)
+console.log(pessoa2.endereço['cidade'].nome)
+console.log(pessoa2['endereço']['cidade']['nome'])
+
+// @note  O uso do formato ['texto'] aceita caracteres especiais
+
+// @note  Usando array lists como atributo (coleções)
+
+const concessionaria = {
+    CNPJ: "123",
+    endereço: {
+        logradouro: "Rua A",
+        numero: 1,
+        bairro: {
+            nome: "A"
+        },
+        cidade: {
+            nome: "São Paulo",
+        }
+    },
+    carros: [
+        {
+            marca: "Toyota",
+            modelo: "Prius",
+            fabricação: "2018"
+        },
+        {
+            marca: "Toyota",
+            modelo: "Hillux",
+            fabricação: "2020"
+        }
+    ]
+}
+
+console.log(concessionaria)
+
+console.log("Carros da concessionária: ")
+for (let carro of concessionaria.carros) 
+    console.log('- ' + carro.marca + ' ' + carro.modelo + ' (' + carro.fabricação + ')')
+
+// @note  Definindo métodos para um objeto
+
+const calculadora = {
+
+    soma: function(a, b) {
+        return a + b
+    },
+
+    subtracao: (a, b) => a - b
+
+}
+
+console.log(calculadora.soma(2,3))
+console.log(calculadora.subtracao(5,3))
+
+class calc {
+
+    static soma(a,b) {
+        return a + b
+    } 
+
+    static subtracao(a,b) {
+        return a - b
+    }
+
+}
+
+console.log(calc.soma(2,3))
+console.log(calc.subtracao(5,3))
+
+// @note  Classe em JavaScript
+
+class carro {
+
+    constructor(marca, modelo, fabricacao) {
+        this.marca = marca
+        this.modelo = modelo
+        this.fabricacao = fabricacao
+    }
+
+    toString() {
+        return `${this.marca} ${this.modelo} (${this.fabricacao})`
+    }
+
+}
+
+carro_instance = new carro("Toyota", "Hillux", "2020")
+console.log(carro_instance.toString())
+
+/* Processamento síncrono e assíncrono =================================*/
+
+const oi = () => console.log('oi')
+
+console.log('Começou...')
+oi()
+console.log('Terminou...')
+
+// @note  IO-Bound:  Input/Output
+//        CPU-Bound: Processamento
+
+// @note  readFile: assíncrona IO-Bound
+
+const fs = require('fs')
+const openFile = (path) => {
+
+    // Callback function
+    const displayContent = (err, content) => {
+
+        if (err) console.log(`${err}`)
+        else {
+    
+            console.log(`Funcionou: ${content.toString()}`) 
+            const dobro = Number(content.toString()) * 2
+
+            fs.writeFile('arquivo_result.txt', dobro.toString(), (err) => {
+
+                if (err) console.log(`${err}`)
+                else console.log("Arquivo escrito com sucesso!")
+            
+            })
+
+        }
+
+    }   
+    
+    // Assíncrona
+
+    fs.readFile(path, displayContent)
+    console.log('Fim da função displayContent')
+
+}
+
+openFile('arquivo_inexistente.txt')
+openFile('arquivo.txt')
+
+// @note  A string de final de execução da função será
+//        exibida antes do conteúdo lido, por conta do
+//        comportamento assíncrona.
+
