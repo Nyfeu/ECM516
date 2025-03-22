@@ -542,6 +542,8 @@ console.log('Terminou...')
 
 // @note  readFile: assíncrona IO-Bound
 
+/* SUPRIMINDO ERRO DE EXECUÇÃO
+
 const fs = require('fs')
 const openFile = (path) => {
 
@@ -575,7 +577,84 @@ const openFile = (path) => {
 openFile('arquivo_inexistente.txt')
 openFile('arquivo.txt')
 
+*/
+
 // @note  A string de final de execução da função será
 //        exibida antes do conteúdo lido, por conta do
 //        comportamento assíncrona.
 
+// @note  Callback Hell. Difícil leitura e manutenção do
+//        código JavaScript. Causada por callbacks aninhados,
+//        onde se realizam operações assíncronas que dependem
+//        dos resultados da operação anterior. Também 
+//        chamada de "pirâmide da perdição" ou "código hadouken".
+
+/* Promise =============================================================*/
+
+// @brief Uma "promise" representa a eventual conclusão (ou falha)
+//        de uma operação assíncrona e seu valor resultante. 
+
+// @note  Uma "promise", portanto, a partir do estado "pending" 
+//        pode avançar para o estado "rejected" ou "fulfilled".
+
+function calculoDemorado(n) {
+
+    const p = new Promise((resolve, reject) => {
+
+        let ac = 0
+        for (let i = 1; i <= n; i++) ac += i
+        resolve(ac)
+
+    })
+
+    return p
+
+}
+
+const resultado = calculoDemorado(10)
+
+resultado
+
+.then(res => {
+
+    console.log(`Funcionou (res1): ${res}`)
+
+    calculoDemorado(res).then(res2 => {
+
+        console.log(`Funcionou (res2): ${res2}`)
+
+        calculoDemorado(res2).then(res3 => {
+
+            console.log(`Funcionou (res3): ${res3}`)
+
+        })
+
+    })
+
+})
+
+.catch(err => console.log(`Erro: ${err}`))
+
+// @note  A utilização de promises aliadas aos métodos 'then' e 'catch
+//        resolvem o problema na identificação de parâmetros em 
+//        callback function. No entanto, não resolvem o aninhamento
+//        de callbacks do dito: "Callback Hell".
+
+// @note  O método 'catch' pode ser omitido.
+
+function calculoRapidinho(n) {
+
+    return (n < 0) ? 
+        Promise.reject("N deve ser positivo") : 
+        Promise.resolve((n/2) * (n+1))
+
+}
+
+const calculo_rapidinho = calculoRapidinho(-1)
+
+.then(res => console.log(`Funcionou: ${res}`))
+.catch(err => console.log(`Erro: ${err}`))
+
+// @note  Caso um catch não tenha sido definido, então, caso seja rejeitado
+//        a execução falhará! Deve-se ter atenção de sempre utilizar o catch
+//        quando um erro pode ser lançado.
