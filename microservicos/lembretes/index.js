@@ -17,25 +17,12 @@ const axios = require('axios')
 // Middleware
 app.use(express.json())
 
-// Iniciando contagem em id = 4
-let id = 4 
+// Iniciando contagem em id = 1
+let id = 1
 
 // Cadastro de lembretes
 const baseLembretes = {
-    data: [
-        {
-            id: 1,
-            texto: "Acordar",
-        },
-        {
-            id: 2,
-            texto: "Tomar café"
-        },
-        {
-            id: 3,
-            texto:"Ir para a faculdade",
-        },
-    ]
+    data: []
 }
 
 app.get("/lembretes", (req,res) => {

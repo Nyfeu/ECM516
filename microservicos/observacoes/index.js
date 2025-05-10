@@ -70,6 +70,15 @@ app.post('/lembretes/:idLembrete/observacoes', function(req, res) {
 
 })
 
+//POST /eventos
+app.post('/eventos', (req, res) => {
+
+    const evento = req.body;
+    console.log(evento);
+    res.end();
+    
+})
+
 app.listen(port, () => {
 
     console.log(`Observações (${port}): [OK]`)
