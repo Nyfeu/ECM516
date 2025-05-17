@@ -8,6 +8,7 @@ const port = 10000
 const observacoes_port = 5000
 const lembretes_port = 4000
 const consulta_port = 6000
+const classificacao_port = 7000
 
 app.post('/eventos', async (req, res) => {
 
@@ -36,7 +37,14 @@ app.post('/eventos', async (req, res) => {
         console.log(e)
     }
 
-    // 5. "Responder" a requisição para o remetente
+    // 5. Enviar o evento para o mss de classificacao
+    try {
+        await axios.post(`http://localhost:${classificacao_port}/eventos`, evento)
+    } catch (e) {
+        console.log(e)
+    }
+
+    // 6. "Responder" a requisição para o remetente
     res.end()
 
 })

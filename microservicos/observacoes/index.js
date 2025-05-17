@@ -4,34 +4,39 @@ const app = express()
 app.use(express.json())
 
 const port = 5000
+const barramento_port = 10000
 
 const baseObservacoes = {
-    observacao: [
-        [
-            {
-                id: 1001,
-                idLembrete: 1,
-                texto: "Sem açúcar"
-            },
-            {
-                id: 1002,
-                idLembrete: 1,
-                texto: "Comprar o pó"
-            },
-        ],
-        [
-            {
-                id: 1003,
-                idLembrete: 2,
-                texto: "Sem açúcar"
-            },
-            {
-                id: 1004,
-                idLembrete: 2,
-                texto: "Comprar o pó"
-            },
-        ]
-    ]
+    observacao: []
+}
+
+// Faça um mapa de funções para que haja o tratamento
+// do evento do tipo ObservacaoClassificada. Esse tipo de
+// evento deve ser traduzido para outro do tipo ObservacaoAtualizada
+
+// Não se esqueça de atualizar a base local
+
+const funcoes = {
+    ObservacaoClassificada: async (observacao) => {
+        
+        const observacoes = baseObservacoes.observacao[idLembrete - 1] || []
+        const observacao_index = observacoes.findIndex((obs) => { obs.id === observacao.id })
+        observacoes[observacao_index] = observacao;
+
+        try {
+
+            await axios.post(`http://localhost:${barramento_port}/eventos`, {
+                type: 'ObservacaoAtualizada',
+                payload: observacao
+            })
+
+        } catch (e) {
+
+            console.log(e)
+
+        }
+
+    }
 }
 
 //GET /lembretes/1/observacoes
@@ -60,6 +65,7 @@ app.post('/lembretes/:idLembrete/observacoes', function(req, res) {
         id: idObservacao, 
         idLembrete,
         texto,
+        status: 'aguardando'
     }
 
     const observacoes = baseObservacoes.observacao[idLembrete - 1] || []
@@ -71,11 +77,27 @@ app.post('/lembretes/:idLembrete/observacoes', function(req, res) {
 })
 
 //POST /eventos
-app.post('/eventos', (req, res) => {
+app.post('/eventos', async (req, res) => {
 
-    const evento = req.body;
-    console.log(evento);
-    res.end();
+    try {
+
+        // Tratamento evento de ObservacaoClassificada
+
+        const evento = req.body;
+
+        console.log(evento);
+
+        await funcoes[evento.type](evento.payload);
+
+    } catch (e) {
+
+        console.log(e);
+
+    } finally {
+    
+        res.end();
+
+    }
     
 })
 
